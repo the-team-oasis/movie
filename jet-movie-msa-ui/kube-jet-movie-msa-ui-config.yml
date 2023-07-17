@@ -1,0 +1,44 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: jet-movie-msa-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jet-movie-msa-ui
+  template:
+    metadata:
+      labels:
+        app: jet-movie-msa-ui
+    spec:
+      containers:
+      - name: jet-movie-msa-ui
+        image: yny.ocir.io/axiffngjdqvm/movie/jet-movie-msa-ui:dankim
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8000
+          protocol: TCP
+      imagePullSecrets:
+        - name: ocirsecret
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: jet-movie-msa-ui
+  labels:
+    app: jet-movie-msa-ui
+  annotations:
+    oci.oraclecloud.com/load-balancer-type: "lb"
+    service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "100"
+spec:
+  ports:
+  - port: 80
+    targetPort: 8000
+    name: http
+  selector:
+    app: jet-movie-msa-ui
+  type: LoadBalancer

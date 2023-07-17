@@ -1,0 +1,71 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: springboot-movie-people-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springboot-movie-people-api
+  template:
+    metadata:
+      labels:
+        app: springboot-movie-people-api
+    spec:
+      containers:
+      - name: springboot-movie-people-api
+        image: yny.ocir.io/axiffngjdqvm/movie/springboot-movie-people-api:dankim
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef: 
+              name: moviedb-config
+              key: db-host
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef: 
+              name: moviedb-config
+              key: db-port
+        - name: DB_SERVICE_NAME
+          valueFrom:
+            configMapKeyRef: 
+              name: moviedb-config
+              key: db-service-name
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: moviedb-secret
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: moviedb-secret
+              key: password
+      imagePullSecrets:
+        - name: ocirsecret
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: springboot-movie-people-api
+  labels:
+    app: springboot-movie-people-api
+  annotations:
+    oci.oraclecloud.com/load-balancer-type: "lb"
+    service.beta.kubernetes.io/oci-load-balancer-internal: "true"
+    service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "100"
+spec:
+  ports:
+  - port: 31000
+    targetPort: 8080
+    name: http
+  selector:
+    app: springboot-movie-people-api
+  type: LoadBalancer

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: moviedb-config
+data:
+  db-host: "130.162.135.224"
+  db-port: "1521"
+  db-service-name: "DB0501_icn13s.sub03220956020.myvcn.oraclevcn.com"

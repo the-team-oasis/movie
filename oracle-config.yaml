@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: movie-db
+  namespace: movie
+data:
+  db-host: RDS.ap-northeast-2.rds.amazonaws.com
+  fluentd-sever-ip: 10.xxx.xxx.xxx
