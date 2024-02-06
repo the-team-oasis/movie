@@ -3,7 +3,7 @@ apiVersion: apps/v1
 metadata:
   name: springboot-movie-people-api
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: springboot-movie-people-api
